@@ -1,0 +1,23 @@
+package utils;
+
+import model.Expense;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+public class CSVExporter {
+
+    public static boolean export(List<Expense> expenses) {
+        try (FileWriter writer = new FileWriter("data/expenses.csv")) {
+            writer.write("Date,Category,Description,Amount\n");
+            for (Expense e : expenses) {
+                writer.write(String.format("%s,%s,%s,%.2f\n",
+                        e.getDate(), e.getCategory(), e.getDescription(), e.getAmount()));
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}

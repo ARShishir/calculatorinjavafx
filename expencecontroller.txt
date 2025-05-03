@@ -1,0 +1,79 @@
+package controller;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import model.Expense;
+import utils.CSVExporter;
+import utils.ChartUtils;
+
+public class ExpenseController {
+
+    @FXML private DatePicker datePicker;
+    @FXML private TextField descriptionField;
+    @FXML private ComboBox<String> categoryBox;
+    @FXML private TextField amountField;
+    @FXML private TableView<Expense> expenseTable;
+    @FXML private TableColumn<Expense, String> dateColumn;
+    @FXML private TableColumn<Expense, String> categoryColumn;
+    @FXML private TableColumn<Expense, String> descriptionColumn;
+    @FXML private TableColumn<Expense, Double> amountColumn;
+    @FXML private PieChart pieChart;
+
+    private final ObservableList<Expense> expenses = FXCollections.observableArrayList();
+
+    @FXML
+    public void initialize() {
+        categoryBox.setItems(FXCollections.observableArrayList("Food", "Transport", "Utilities", "Other"));
+
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        expenseTable.setItems(expenses);
+    }
+
+    @FXML
+    public void handleAddExpense() {
+        String date = datePicker.getValue() != null ? datePicker.getValue().toString() : "";
+        String desc = descriptionField.getText();
+        String category = categoryBox.getValue();
+        String amountText = amountField.getText();
+
+        if (date.isEmpty() || desc.isEmpty() || category == null || amountText.isEmpty()) {
+            showAlert("Missing Input", "Please fill all fields.");
+            return;
+        }
+
+        try {
+            double amount = Double.parseDouble(amountText);
+            Expense expense = new Expense(date, category, desc, amount);
+            expenses.add(expense);
+            ChartUtils.updatePieChart(pieChart, expenses);
+        } catch (NumberFormatException e) {
+            showAlert("Invalid Amount", "Please enter a valid number.");
+        }
+    }
+
+    @FXML
+    public void handleExportCSV() {
+        boolean success = CSVExporter.export(expenses);
+        if (success) {
+            showAlert("Export Successful", "Data saved to expenses.csv");
+        } else {
+            showAlert("Export Failed", "Could not export data.");
+        }
+    }
+
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+}

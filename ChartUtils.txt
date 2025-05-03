@@ -1,0 +1,26 @@
+package utils;
+
+import javafx.collections.FXCollections;
+import javafx.scene.chart.PieChart;
+import model.Expense;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class ChartUtils {
+
+    public static void updatePieChart(PieChart chart, List<Expense> expenses) {
+        Map<String, Double> categoryTotals = new HashMap<>();
+        for (Expense e : expenses) {
+            categoryTotals.put(e.getCategory(),
+                categoryTotals.getOrDefault(e.getCategory(), 0.0) + e.getAmount());
+        }
+
+        var data = FXCollections.observableArrayList();
+        for (var entry : categoryTotals.entrySet()) {
+            data.add(new PieChart.Data(entry.getKey(), entry.getValue()));
+        }
+        chart.setData(data);
+    }
+}

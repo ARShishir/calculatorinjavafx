@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="controller.ExpenseController">
+    <top>
+        <HBox spacing="10" padding="10">
+            <DatePicker fx:id="datePicker" />
+            <TextField fx:id="descriptionField" promptText="Description" />
+            <ComboBox fx:id="categoryBox" promptText="Category" />
+            <TextField fx:id="amountField" promptText="Amount" />
+            <Button text="Add" onAction="#handleAddExpense"/>
+            <Button text="Export CSV" onAction="#handleExportCSV"/>
+        </HBox>
+    </top>
+
+    <center>
+        <TableView fx:id="expenseTable">
+            <columns>
+                <TableColumn fx:id="dateColumn" text="Date" />
+                <TableColumn fx:id="categoryColumn" text="Category" />
+                <TableColumn fx:id="descriptionColumn" text="Description" />
+                <TableColumn fx:id="amountColumn" text="Amount" />
+            </columns>
+        </TableView>
+    </center>
+
+    <bottom>
+        <PieChart fx:id="pieChart" />
+    </bottom>
+</BorderPane>
